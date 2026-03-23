@@ -11,7 +11,7 @@ export function SocialLoginPanel({
   title = "Fazer login com:",
 }: SocialLoginPanelProps) {
   return (
-    <div className="bg-emerald-50 p-8 h-full w-full flex flex-col justify-center items-center relative overflow-hidden">
+    <div className="p-8 h-full w-full flex flex-col justify-center items-center relative overflow-hidden">
       <div className="relative z-10 w-full max-w-xs text-center">
         <p className="text-sm text-slate-600 mb-1">{topText}</p>
 
