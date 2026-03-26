@@ -20,6 +20,7 @@ export default function Home() {
 
           <form className="space-y-4">
             <BaseInput
+              className="py-4"
               id="username"
               label="Seu nome ou e-mail"
               placeholder="Entre com seu usuário"
@@ -27,6 +28,7 @@ export default function Home() {
             />
 
             <BaseInput
+              className="py-4"
               id="password"
               label="Senha"
               placeholder="Entre com sua senha"

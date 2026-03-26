@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 import React, { useState } from "react";
 
@@ -25,6 +26,7 @@ export function BaseInput({
   type = "text",
   useShowPasswordToggle,
   icon,
+  className,
   ...props
 }: Props) {
   if (type === "password" && useShowPasswordToggle) {
@@ -34,6 +36,7 @@ export function BaseInput({
         label={label}
         placeholder={placeholder}
         icon={icon}
+        className={className}
         {...props}
       />
     );
@@ -54,7 +57,7 @@ export function BaseInput({
           id={id}
           placeholder={placeholder}
           type={type}
-          className={icon ? "pl-10" : ""}
+          className={cn({ "pl-10": icon }, className)}
           {...props}
         />
       </div>
@@ -67,8 +70,9 @@ function PasswordInput({
   label,
   placeholder,
   icon,
+  className,
   ...props
-}: BaseInputPasswordProps) {
+}: Props) {
   const [showPassword, setShowPassword] = useState(false);
   return (
     <div className="space-y-2">
@@ -85,7 +89,7 @@ function PasswordInput({
           id={id}
           placeholder={placeholder}
           type={showPassword ? "text" : "password"}
-          className={`pr-10 ${icon ? "pl-10" : ""}`}
+          className={cn(`pr-10`, { "pl-10": icon }, className)}
           {...props}
         />
 
