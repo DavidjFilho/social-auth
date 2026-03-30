@@ -163,6 +163,7 @@ function PasswordInput({
         />
 
         <button
+          tabIndex={-1}
           type="button"
           onClick={() => setShowPassword(!showPassword)}
           className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-slate-500 hover:text-slate-700"
