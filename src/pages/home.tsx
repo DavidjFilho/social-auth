@@ -23,7 +23,6 @@ export default function Home() {
               className="py-4"
               id="username"
               label="Seu nome ou e-mail"
-              placeholder="Entre com seu usuário"
               icon={Mail}
               labelIsFloating
             />
@@ -32,7 +31,6 @@ export default function Home() {
               className="py-4"
               id="password"
               label="Senha"
-              placeholder="Entre com sua senha"
               type="password"
               useShowPasswordToggle
               icon={Lock}

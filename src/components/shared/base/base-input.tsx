@@ -1,3 +1,4 @@
+import { withMask } from "use-mask-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -14,6 +15,7 @@ type BaseInputProps = {
   placeholder?: string;
   icon?: LucideIcon;
   labelIsFloating?: boolean;
+  mask?: string;
 };
 
 type BaseInputPasswordProps = BaseInputProps & {
@@ -29,6 +31,7 @@ export function BaseInput({
   icon,
   className,
   labelIsFloating = false,
+  mask = "",
   ...props
 }: Props) {
   if (type === "password" && useShowPasswordToggle) {
@@ -63,7 +66,11 @@ export function BaseInput({
           id={id}
           placeholder={inputPlaceholder}
           type={type}
-          className={cn("peer",{ "pl-10": hasIcon }, className)}
+          className={cn("peer", { "pl-10": hasIcon }, className)}
+          ref={withMask(mask, {
+            placeholder: "_",
+            showMaskOnHover: false,
+          })}
           {...props}
         />
         <InputFloatingLabel
