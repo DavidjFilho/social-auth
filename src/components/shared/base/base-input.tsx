@@ -1,13 +1,11 @@
-import { withMask } from "use-mask-input";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { Eye, EyeOff, type LucideIcon } from "lucide-react";
 import React, { useState } from "react";
+import { withMask } from "use-mask-input";
 
-type Props = BaseInputProps &
-  BaseInputPasswordProps &
-  React.InputHTMLAttributes<HTMLInputElement>;
+type Props = BaseInputProps & React.InputHTMLAttributes<HTMLInputElement>;
 
 type BaseInputProps = {
   id: string;
@@ -15,11 +13,8 @@ type BaseInputProps = {
   placeholder?: string;
   icon?: LucideIcon;
   labelIsFloating?: boolean;
-  mask?: string;
-};
-
-type BaseInputPasswordProps = BaseInputProps & {
   useShowPasswordToggle?: boolean;
+  mask?: string;
 };
 
 export function BaseInput({
@@ -27,29 +22,23 @@ export function BaseInput({
   label,
   placeholder,
   type = "text",
-  useShowPasswordToggle,
   icon,
   className,
   labelIsFloating = false,
-  mask = "",
+  useShowPasswordToggle = false,
+  mask,
   ...props
 }: Props) {
-  if (type === "password" && useShowPasswordToggle) {
-    return (
-      <PasswordInput
-        id={id}
-        label={label}
-        placeholder={placeholder}
-        icon={icon}
-        className={className}
-        labelIsFloating={labelIsFloating}
-        {...props}
-      />
-    );
-  }
+  const [showPassword, setShowPassword] = useState(false);
 
   const hasIcon = Boolean(icon);
+  const isPasswordWithToggle = type === "password" && useShowPasswordToggle;
   const inputPlaceholder = labelIsFloating ? " " : placeholder;
+  const inputType = isPasswordWithToggle
+    ? showPassword
+      ? "text"
+      : "password"
+    : type;
 
   return (
     <div className="space-y-2">
@@ -65,20 +54,47 @@ export function BaseInput({
         <Input
           id={id}
           placeholder={inputPlaceholder}
-          type={type}
-          className={cn("peer", { "pl-10": hasIcon }, className)}
-          ref={withMask(mask, {
-            placeholder: "_",
-            showMaskOnHover: false,
-          })}
+          type={inputType}
+          className={cn(
+            "peer",
+            {
+              "pl-10": hasIcon,
+              "pr-10": isPasswordWithToggle,
+            },
+            className,
+          )}
+          ref={
+            mask
+              ? withMask(mask, {
+                  placeholder: "_",
+                  showMaskOnHover: false,
+                })
+              : undefined
+          }
           {...props}
         />
+
         <InputFloatingLabel
           id={id}
           label={label}
           hasIcon={hasIcon}
           isFloating={labelIsFloating}
         />
+
+        {isPasswordWithToggle && (
+          <button
+            tabIndex={-1}
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+          >
+            {showPassword ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
+        )}
       </div>
     </div>
   );
@@ -114,67 +130,5 @@ function InputFloatingLabel({
     >
       {label}
     </Label>
-  );
-}
-
-function PasswordInput({
-  id,
-  label,
-  placeholder,
-  icon,
-  className,
-  labelIsFloating = false,
-  ...props
-}: Props) {
-  const [showPassword, setShowPassword] = useState(false);
-  const hasIcon = Boolean(icon);
-  const inputPlaceholder = labelIsFloating ? " " : placeholder;
-
-  return (
-    <div className="space-y-2">
-      {!labelIsFloating && <Label htmlFor={id}>{label}</Label>}
-
-      <div className="relative">
-        {icon && (
-          <span className="absolute left-3 top-1/2  z-10 -translate-y-1/2 text-slate-400">
-            {React.createElement(icon, { className: "size-4" })}
-          </span>
-        )}
-
-        <Input
-          id={id}
-          placeholder={inputPlaceholder}
-          type={showPassword ? "text" : "password"}
-          className={cn(
-            "peer pr-10",
-            {
-              "pl-10": hasIcon,
-            },
-            className,
-          )}
-          {...props}
-        />
-
-        <InputFloatingLabel
-          id={id}
-          label={label}
-          hasIcon={hasIcon}
-          isFloating={labelIsFloating}
-        />
-
-        <button
-          tabIndex={-1}
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-slate-500 hover:text-slate-700"
-        >
-          {showPassword ? (
-            <EyeOff className="size-4" />
-          ) : (
-            <Eye className="size-4" />
-          )}
-        </button>
-      </div>
-    </div>
   );
 }
