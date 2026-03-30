@@ -25,6 +25,7 @@ export default function Home() {
               label="Seu nome ou e-mail"
               placeholder="Entre com seu usuário"
               icon={Mail}
+              labelIsFloating
             />
 
             <BaseInput
@@ -33,8 +34,9 @@ export default function Home() {
               label="Senha"
               placeholder="Entre com sua senha"
               type="password"
-              useShowPasswordToggle={true}
+              useShowPasswordToggle
               icon={Lock}
+              labelIsFloating
             />
 
             <div className="flex items-center justify-between text-sm">
