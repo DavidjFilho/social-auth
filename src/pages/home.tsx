@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Mail, Lock } from "lucide-react";
 import { Link } from "react-router";
-
 import { AuthLayout } from "./auth-layout";
 import { SocialLoginPanel } from "./social-login-painel";
 import { BaseInput } from "@/components/shared/base/base-input";
@@ -43,9 +42,9 @@ export default function Home() {
                 Salvar login
               </label>
 
-              <a href="#" className="text-slate-500 hover:underline">
-                Esqueceu sua senha?
-              </a>
+              <Link to="/forgot-password" className="text-slate-500 hover:underline">
+                Esqueceu a senha?
+              </Link>
             </div>
 
             <Button className="w-full bg-emerald-600 hover:bg-emerald-700">

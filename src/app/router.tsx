@@ -1,14 +1,14 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
+import { Loader } from "@/components/loader";
 
 const HomePage = lazy(() => import("../pages/home"));
 const LoginPage = lazy(() => import("../pages/login"));
 const RegisterPage = lazy(() => import("../pages/register"));
+const ForgotPasswordPage = lazy(() => import("../pages/forgot-password"));
 const NotFoundPage = lazy(() => import("../pages/not-found"));
 
-function Loader() {
-  return <p>Carregando...</p>;
-}
+
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +33,14 @@ export const router = createBrowserRouter([
     element: (
       <Suspense fallback={<Loader />}>
         <RegisterPage />
+      </Suspense>
+    ),
+  },
+  {
+    path: "/forgot-password",
+    element: (
+      <Suspense fallback={<Loader />}>
+        <ForgotPasswordPage />
       </Suspense>
     ),
   },
