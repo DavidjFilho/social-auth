@@ -33,12 +33,30 @@ export function BaseInput({
 
   const hasIcon = Boolean(icon);
   const isPasswordWithToggle = type === "password" && useShowPasswordToggle;
-  const inputPlaceholder = labelIsFloating ? " " : placeholder;
   const inputType = isPasswordWithToggle
     ? showPassword
       ? "text"
       : "password"
     : type;
+  const inputPlaceholder = labelIsFloating ? " " : placeholder;
+
+  const { ref: registerRef, ...inputProps } = props;
+
+  const handleInputRef = (node: HTMLInputElement | null) => {
+    if (!isPasswordWithToggle && mask && node) {
+      withMask(mask, {
+        placeholder: "_",
+        showMaskOnHover: false,
+      })(node);
+    }
+
+    if (typeof registerRef === "function") {
+      registerRef(node);
+    } else if (registerRef && typeof registerRef === "object") {
+      (registerRef as React.MutableRefObject<HTMLInputElement | null>).current =
+        node;
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -63,15 +81,8 @@ export function BaseInput({
             },
             className,
           )}
-          ref={
-            mask
-              ? withMask(mask, {
-                  placeholder: "_",
-                  showMaskOnHover: false,
-                })
-              : undefined
-          }
-          {...props}
+          ref={handleInputRef}
+          {...inputProps}
         />
 
         <InputFloatingLabel
