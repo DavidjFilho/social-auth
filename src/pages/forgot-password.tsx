@@ -4,8 +4,9 @@ import { useEffect, useMemo, useState } from "react";
 
 import { PhoneStep } from "./forgot-password/phone-step";
 import { CodeStep } from "./forgot-password/code-step";
+import { ResetPasswordStep } from "./forgot-password/reset-password-step";
 
-type Step = "phone" | "code";
+type Step = "phone" | "code" | "reset";
 
 const OTP_LENGTH = 6;
 const RESEND_SECONDS = 50;
@@ -14,6 +15,8 @@ export default function ForgotPassword() {
   const [step, setStep] = useState<Step>("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(""));
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [resendTimer, setResendTimer] = useState(RESEND_SECONDS);
 
   const formattedPhone = useMemo(() => {
@@ -54,6 +57,20 @@ export default function ForgotPassword() {
     // depois aqui você pode chamar sua API de reenvio
   }
 
+  function handleVerifyCode() {
+    setStep("reset");
+  }
+
+  function handleResetPassword() {
+    // depois aqui você chama a API real
+    console.log("Senha redefinida com sucesso", {
+      phone,
+      code: otp.join(""),
+      password,
+      confirmPassword,
+    });
+  }
+
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#dfe4ec] px-4 py-10">
       <div className="relative w-full max-w-155 rounded-[20px] bg-white px-8 py-10 shadow-[0_8px_24px_rgba(15,23,42,0.08)] md:px-12 md:py-12">
@@ -64,19 +81,32 @@ export default function ForgotPassword() {
           <X className="size-7" />
         </Link>
 
-        {step === "phone" ? (
+        {step === "phone" && (
           <PhoneStep
             phone={phone}
             setPhone={setPhone}
             onNext={handleNextStep}
           />
-        ) : (
+        )}
+
+        {step === "code" && (
           <CodeStep
             phone={formattedPhone}
             otp={otp}
             setOtp={setOtp}
             resendTimer={resendTimer}
             onResend={handleResendCode}
+            onSubmit={handleVerifyCode}
+          />
+        )}
+
+        {step === "reset" && (
+          <ResetPasswordStep
+            password={password}
+            confirmPassword={confirmPassword}
+            setPassword={setPassword}
+            setConfirmPassword={setConfirmPassword}
+            onSubmit={handleResetPassword}
           />
         )}
       </div>

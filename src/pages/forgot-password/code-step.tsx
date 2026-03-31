@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +9,7 @@ type CodeStepProps = {
   setOtp: (value: string[]) => void;
   resendTimer: number;
   onResend: () => void;
+  onSubmit: () => void;
 };
 
 export function CodeStep({
@@ -18,21 +18,16 @@ export function CodeStep({
   setOtp,
   resendTimer,
   onResend,
+  onSubmit,
 }: CodeStepProps) {
   const isOtpComplete = otp.every((digit) => digit.trim() !== "");
   const resendDisabled = resendTimer > 0;
-
-  useEffect(() => {
-    // espaço reservado caso depois você queira auto foco no mount
-  }, []);
 
   function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!isOtpComplete) return;
 
-    const code = otp.join("");
-
-    console.log("Código verificado:", code);
+    onSubmit();
   }
 
   return (
