@@ -2,13 +2,11 @@ import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router";
 import { Loader } from "@/components/loader";
 
-const HomePage = lazy(() => import("../pages/home"));
-const LoginPage = lazy(() => import("../pages/login"));
-const RegisterPage = lazy(() => import("../pages/register"));
-const ForgotPasswordPage = lazy(() => import("../pages/forgot-password"));
-const NotFoundPage = lazy(() => import("../pages/not-found"));
-
-
+const HomePage = lazy(() => import("@/pages/home"));
+const LoginPage = lazy(() => import("@/pages/login"));
+const RegisterPage = lazy(() => import("@/pages/auth/register"));
+const ForgotPasswordPage = lazy(() => import("@/pages/forgot-password"));
+const NotFoundPage = lazy(() => import("@/pages/not-found"));
 
 export const router = createBrowserRouter([
   {

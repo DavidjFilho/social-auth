@@ -15,6 +15,7 @@ type BaseInputProps = {
   labelIsFloating?: boolean;
   useShowPasswordToggle?: boolean;
   mask?: string;
+  error?: string;
 };
 
 export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
@@ -29,6 +30,7 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
       labelIsFloating = false,
       useShowPasswordToggle = false,
       mask,
+      error,
       ...props
     },
     ref,
@@ -38,11 +40,13 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
 
     const hasIcon = Boolean(icon);
     const isPasswordWithToggle = type === "password" && useShowPasswordToggle;
+
     const inputType = isPasswordWithToggle
       ? showPassword
         ? "text"
         : "password"
       : type;
+
     const inputPlaceholder = labelIsFloating ? " " : placeholder;
 
     useImperativeHandle(ref, () => innerRef.current as HTMLInputElement, []);
@@ -63,12 +67,12 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
     };
 
     return (
-      <div className="space-y-2">
+      <div className="space-y-1">
         {!labelIsFloating && <Label htmlFor={id}>{label}</Label>}
 
         <div className="relative">
           {icon && (
-            <span className="absolute left-3 top-1/2 z-10 -translate-y-1/2 text-slate-400">
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
               {React.createElement(icon, { className: "size-4" })}
             </span>
           )}
@@ -77,11 +81,13 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
             id={id}
             placeholder={inputPlaceholder}
             type={inputType}
+            aria-invalid={!!error}
             className={cn(
               "peer",
               {
                 "pl-10": hasIcon,
                 "pr-10": isPasswordWithToggle,
+                "border-red-500 focus-visible:ring-red-500": !!error,
               },
               className,
             )}
@@ -89,19 +95,28 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
             {...props}
           />
 
-          <InputFloatingLabel
-            id={id}
-            label={label}
-            hasIcon={hasIcon}
-            isFloating={labelIsFloating}
-          />
+          {labelIsFloating && (
+            <Label
+              htmlFor={id}
+              className={cn(
+                "pointer-events-none absolute transition-all duration-200",
+                "top-1/2 -translate-y-1/2 text-sm",
+                "peer-focus:top-0 peer-focus:text-xs",
+                "peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:text-xs",
+                hasIcon ? "left-10" : "left-3",
+                error ? "text-red-500" : "text-slate-500",
+              )}
+            >
+              {label}
+            </Label>
+          )}
 
           {isPasswordWithToggle && (
             <button
-              tabIndex={-1}
               type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 z-10 -translate-y-1/2 text-slate-500 hover:text-slate-700"
+              tabIndex={-1}
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2"
             >
               {showPassword ? (
                 <EyeOff className="size-4" />
@@ -111,42 +126,11 @@ export const BaseInput = React.forwardRef<HTMLInputElement, Props>(
             </button>
           )}
         </div>
+
+        {error && <p className="text-sm text-red-500">{error}</p>}
       </div>
     );
   },
 );
 
 BaseInput.displayName = "BaseInput";
-
-function InputFloatingLabel({
-  id,
-  label,
-  hasIcon,
-  isFloating,
-}: {
-  id: string;
-  label: string;
-  hasIcon: boolean;
-  isFloating: boolean;
-}) {
-  if (!isFloating || !label) return null;
-
-  return (
-    <Label
-      htmlFor={id}
-      className={cn(
-        "pointer-events-none absolute z-20 transition-all duration-200",
-        "top-1/2 -translate-y-1/2 text-sm text-slate-500",
-        "peer-focus:top-0 peer-focus:text-xs peer-focus:font-medium",
-        "peer-focus:bg-background peer-focus:px-1",
-        "peer-not-placeholder-shown:top-0 peer-not-placeholder-shown:text-xs peer-not-placeholder-shown:font-medium",
-        "peer-not-placeholder-shown:bg-background peer-not-placeholder-shown:px-1",
-        hasIcon
-          ? "left-10 peer-focus:left-5 peer-not-placeholder-shown:left-5"
-          : "left-3 peer-focus:left-3 peer-not-placeholder-shown:left-3",
-      )}
-    >
-      {label}
-    </Label>
-  );
-}

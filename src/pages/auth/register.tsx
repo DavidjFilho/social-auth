@@ -1,26 +1,29 @@
 import { Link } from "react-router";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import { Button } from "@/components/ui/button";
-import { AuthLayout } from "./auth-layout";
-import { SocialLoginPanel } from "./social-login-painel";
 import { BaseInput } from "@/components/shared/base/base-input";
 
-type RegisterFormData = {
-  email: string;
-  confirmEmail: string;
-  cpf: string;
-  phone: string;
-  password: string;
-  confirmPassword: string;
-};
+import { AuthLayout } from "../auth-layout";
+import { SocialLoginPanel } from "../social-login-painel";
+
+import {
+  registerSchema,
+  type RegisterFormData,
+} from "@/schemas/auth/register-schema";
 
 export default function RegisterPage() {
   const {
     register,
     handleSubmit,
-    formState: { isSubmitting },
+    formState: { errors, isSubmitting },
   } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    mode: "onBlur",
     defaultValues: {
+      name: "",
+      birthDate: "",
       email: "",
       confirmEmail: "",
       cpf: "",
@@ -31,50 +34,70 @@ export default function RegisterPage() {
   });
 
   function onSubmit(data: RegisterFormData) {
-    console.log(data);
+    console.log("VALIDO:", data);
   }
 
   return (
     <AuthLayout
-      minHeight="min-h-[520px]"
       leftContent={
         <>
-          <p className="text-xs text-muted-foreground mb-2">Crie sua conta</p>
-
-          <h1 className="text-3xl font-bold text-slate-900 mb-6">
-            Faça seu cadastro
-          </h1>
+          <h1 className="mb-4 text-2xl font-bold">Cadastro</h1>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <BaseInput
-              id="email"
-              label="Seu e-mail"
-              type="email"
-              placeholder="Digite seu e-mail"
+              id="name"
+              label="Nome completo"
+              type="text"
               labelIsFloating
+              error={errors.name?.message}
+              {...register("name")}
+            />
+
+            <BaseInput
+              id="birthDate"
+              label="Data de nascimento"
+              type="text"
+              labelIsFloating
+              mask="99/99/9999"
+              error={errors.birthDate?.message}
+              {...register("birthDate")}
+            />
+
+            <BaseInput
+              id="email"
+              label="E-mail"
+              type="email"
+              labelIsFloating
+              error={errors.email?.message}
               {...register("email")}
             />
 
             <BaseInput
               id="confirmEmail"
-              label="Confirme seu e-mail"
+              label="Confirmar e-mail"
               type="email"
               labelIsFloating
+              error={errors.confirmEmail?.message}
               {...register("confirmEmail")}
             />
 
             <BaseInput
               id="cpf"
               label="CPF"
+              type="text"
               labelIsFloating
               mask="999.999.999-99"
+              error={errors.cpf?.message}
               {...register("cpf")}
             />
+
             <BaseInput
               id="phone"
-              label="telefone"
+              label="Telefone"
+              type="text"
               labelIsFloating
               mask="(99) 99999-9999"
+              error={errors.phone?.message}
               {...register("phone")}
             />
 
@@ -84,38 +107,38 @@ export default function RegisterPage() {
               type="password"
               useShowPasswordToggle
               labelIsFloating
+              error={errors.password?.message}
               {...register("password")}
             />
 
             <BaseInput
               id="confirmPassword"
-              label="Confirme sua senha"
+              label="Confirmar senha"
               type="password"
               useShowPasswordToggle
               labelIsFloating
+              error={errors.confirmPassword?.message}
               {...register("confirmPassword")}
             />
 
             <Button
+              className="w-full bg-emerald-600 hover:bg-emerald-700"
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-emerald-600 hover:bg-emerald-700"
             >
-              {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+              {isSubmitting ? "Carregando..." : "Cadastrar"}
             </Button>
-
-            <p className="text-center text-sm text-slate-600 pt-2">
-              Já tem conta?{" "}
-              <Link to="/" className="text-emerald-600 hover:underline">
-                Faça login
-              </Link>
-            </p>
           </form>
+
+          <p className="text-center text-sm text-slate-600 pt-2">
+            Já tem conta?{" "}
+            <Link to="/" className="text-green-600">
+              Login
+            </Link>
+          </p>
         </>
       }
-      rightContent={
-        <SocialLoginPanel topText="Você também pode" title="Entrar com:" />
-      }
+      rightContent={<SocialLoginPanel title="Entrar com:" topText="Ou use:" />}
     />
   );
 }
